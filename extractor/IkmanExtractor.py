@@ -12,6 +12,7 @@ from extractor.BaseExtractor import BaseExtractor
 class IkmanExtractor(BaseExtractor):
     def __init__(self):
         self.base_url = "https://ikman.lk"
+        self.seen_urls = set()  # Track seen URLs to avoid duplicates
 
     def normalize_date(self, raw_date):
         if not raw_date:
@@ -36,10 +37,16 @@ class IkmanExtractor(BaseExtractor):
             "Accept-Language": "en-US,en;q=0.9"
         }
 
+        filename = f"{model}-ikman.csv"
         page_num = 1
         total_pages = 1
         items_per_page = 25
-        cars = []
+        duplicates_skipped = 0
+        self.seen_urls.clear()  # Reset for new extraction
+
+        # Load existing records from CSV to avoid duplicates
+        existing_cars = self.load_existing_from_csv(filename)
+        cars = []  # New cars only
 
         while page_num <= total_pages:
 
@@ -65,7 +72,6 @@ class IkmanExtractor(BaseExtractor):
             print(total_pages)
 
             for item in listings:
-                print(item)
                 link_tag = item.find("a", href=True)
 
                 if not link_tag:
@@ -77,8 +83,14 @@ class IkmanExtractor(BaseExtractor):
                 else:
                     ad_url = href
 
-                # Add delay between individual car requests
+                # Skip if already processed (duplicate)
+                if ad_url in self.seen_urls:
+                    print(f"Skipping duplicate: {ad_url}")
+                    duplicates_skipped += 1
+                    continue
+                self.seen_urls.add(ad_url)
 
+                # Add delay between individual car requests
                 print(ad_url)
                 time.sleep(random.uniform(1, 3))
 
@@ -138,7 +150,7 @@ class IkmanExtractor(BaseExtractor):
 
                 print(car_details)
                 car = Car(
-                    title= title,
+                    title=title,
                     make=car_details.get("Make"),
                     model=car_details.get("Model"),
                     yom=car_details.get("Year of Manufacture"),
@@ -147,11 +159,15 @@ class IkmanExtractor(BaseExtractor):
                     location=car_details.get("Location"),
                     gear=car_details.get("Transmission"),
                     contact=car_details.get("Contact"),
-                    url=href,
+                    url=ad_url,
                     date=car_details.get("Date")
                 )
 
                 cars.append(car)
             page_num += 1
 
-        CsvExporter.save_to_csv(cars, filename=f"{model}-ikman.csv")
+        # Merge existing and new cars, then save
+        all_cars = existing_cars + cars
+        CsvExporter.save_to_csv(all_cars, filename=filename)
+        print(f"Extraction complete. New cars: {len(cars)}, Existing: {len(existing_cars)}, Total: {len(all_cars)}, Duplicates skipped: {duplicates_skipped}")
+        return all_cars

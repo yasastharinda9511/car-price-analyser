@@ -1,3 +1,5 @@
+import csv
+import os
 import time
 import random
 
@@ -6,12 +8,13 @@ from bs4 import BeautifulSoup
 
 from dto.Car import Car
 from exporter.CsvExport import CsvExporter
+from extractor.BaseExtractor import BaseExtractor
 
-
-class RiyasewanaExtractor:
+class RiyasewanaExtractor(BaseExtractor):
     def __init__(self):
         self.base_url = "https://riyasewana.com/search"
         self.cars = []
+        self.seen_urls = set()  # Track seen URLs to avoid duplicates
 
     def fetch_with_retry(self, scraper, url, headers=None, max_retries=5):
         """Fetch URL with exponential backoff on rate limit."""
@@ -49,18 +52,6 @@ class RiyasewanaExtractor:
 
         return data
 
-    def fetch_with_retry(self, scraper, url, headers=None, max_retries=5):
-        """Fetch URL with exponential backoff on rate limit."""
-        for attempt in range(max_retries):
-            resp = scraper.get(url, headers=headers)
-            if resp.status_code == 429:  # Rate limited
-                wait_time = (2 ** attempt) + random.uniform(0, 1)
-                print(f"Rate limited. Waiting {wait_time:.1f}s before retry {attempt + 1}/{max_retries}...")
-                time.sleep(wait_time)
-                continue
-            return resp
-        raise Exception(f"Failed to fetch {url} after {max_retries} retries")
-
     def get_next_page(self, soup) -> str | None:
         """Find the 'Next' link in pagination and return its URL, or None if not found."""
         pagination = soup.select_one("div.pagination")
@@ -83,8 +74,14 @@ class RiyasewanaExtractor:
         }
 
         current_url = f"{self.base_url}/{vehicle_type}/{make}/{model}"
-        cars = []
+        filename = f"{model}-riyasewana.csv"
         page_num = 1
+        duplicates_skipped = 0
+        self.seen_urls.clear()  # Reset for new extraction
+
+        # Load existing records from CSV to avoid duplicates
+        existing_cars = self.load_existing_from_csv(filename)
+        cars = []  # New cars only
 
         while current_url:
             print(f"Fetching page {page_num}: {current_url}")
@@ -102,6 +99,13 @@ class RiyasewanaExtractor:
 
                 title = title_tag.get_text(strip=True)
                 href = title_tag["href"]
+
+                # Skip if already processed (duplicate)
+                if href in self.seen_urls:
+                    print(f"Skipping duplicate: {href}")
+                    duplicates_skipped += 1
+                    continue
+                self.seen_urls.add(href)
 
                 date = item.select_one("div.boxintxt.s").get_text(strip=True)
 
@@ -148,5 +152,8 @@ class RiyasewanaExtractor:
                 # Add delay before fetching next page
                 time.sleep(random.uniform(2, 4))
 
-        CsvExporter.save_to_csv(objects=cars, filename=f"{model}-riyasewana.csv")
-        return cars
+        # Merge existing and new cars, then save
+        all_cars = existing_cars + cars
+        CsvExporter.save_to_csv(objects=all_cars, filename=filename)
+        print(f"Extraction complete. New cars: {len(cars)}, Existing: {len(existing_cars)}, Total: {len(all_cars)}, Duplicates skipped: {duplicates_skipped}")
+        return all_cars
