@@ -87,7 +87,10 @@ class IkmanExtractor(BaseExtractor):
                 if ad_url in self.seen_urls:
                     print(f"Skipping duplicate: {ad_url}")
                     duplicates_skipped += 1
+                    if duplicates_skipped > 25:
+                        break
                     continue
+                duplicates_skipped = 0
                 self.seen_urls.add(ad_url)
 
                 # Add delay between individual car requests

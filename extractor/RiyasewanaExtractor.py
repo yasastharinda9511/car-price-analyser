@@ -104,6 +104,8 @@ class RiyasewanaExtractor(BaseExtractor):
                 if href in self.seen_urls:
                     print(f"Skipping duplicate: {href}")
                     duplicates_skipped += 1
+                    if duplicates_skipped > 25:
+                        break
                     continue
                 self.seen_urls.add(href)
 
