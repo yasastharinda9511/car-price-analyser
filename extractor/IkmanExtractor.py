@@ -152,6 +152,8 @@ class IkmanExtractor(BaseExtractor):
                 car_details["Title"] = title
 
                 print(car_details)
+                if duplicates_skipped > 25:
+                    break
                 car = Car(
                     title=title,
                     make=car_details.get("Make"),

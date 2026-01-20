@@ -3,13 +3,38 @@ from extractor.RiyasewanaExtractor import RiyasewanaExtractor
 
 if __name__ == "__main__":
 
+    # Popular vehicles in Sri Lanka
     vehicles = {
         "cars": {
-            "toyota": ["vitz", "yaris", "passo"],
-            "suzuki": ["alto", "wagon-r"]
+            "toyota": [
+                "vitz", "yaris", "corolla", "axio", "premio", "allion",
+                "prius", "aqua", "passo", "belta", "roomy"
+            ],
+            "suzuki": ["alto", "wagon-r", "swift", "celerio", "ciaz", "every"],
+            "honda": ["fit", "grace", "civic", "city", "insight"],
+            "nissan": ["march", "note", "leaf", "sunny", "bluebird", "latio"],
+            "mazda": ["demio", "axela", "familia"],
+            "mitsubishi": ["lancer", "attrage", "mirage"],
+            "daihatsu": ["mira", "move", "tanto", "hijet"],
+            "perodua": ["axia", "bezza", "viva"],
+            "hyundai": ["accent", "elantra", "i10", "i20"],
+            "kia": ["rio", "cerato", "picanto", "sorento"]
         },
         "suv": {
-            "toyota": ["yaris"]
+            "toyota": ["rav4", "land-cruiser", "prado", "fortuner", "rush", "chr"],
+            "honda": ["vezel", "cr-v", "hr-v"],
+            "nissan": ["x-trail", "juke", "qashqai", "magnite"],
+            "mitsubishi": ["outlander", "pajero", "montero", "asx"],
+            "suzuki": ["vitara", "jimny", "escudo", "fronx"],
+            "mazda": ["cx-3", "cx-5"],
+            "hyundai": ["tucson", "santa-fe", "creta"],
+            "kia": ["sportage", "sorento", "seltos"]
+        },
+        "vans": {
+            "toyota": ["hiace", "noah", "voxy", "townace"],
+            "nissan": ["caravan", "nv200", "serena"],
+            "suzuki": ["every"],
+            "honda": ["stepwgn"]
         }
     }
 

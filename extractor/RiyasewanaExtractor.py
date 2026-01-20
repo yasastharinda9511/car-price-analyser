@@ -149,6 +149,8 @@ class RiyasewanaExtractor(BaseExtractor):
 
             # Check for next page
             current_url = self.get_next_page(soup)
+            if duplicates_skipped > 25 :
+                break
             if current_url:
                 page_num += 1
                 # Add delay before fetching next page
