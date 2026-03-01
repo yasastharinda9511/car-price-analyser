@@ -127,6 +127,7 @@ class RiyasewanaExtractor(BaseExtractor):
                 print("Model:", data.get("Model"))
                 print("YOM:", data.get("YOM"))
                 print("Contact:", data.get("Contact"))
+                print("Engine:", data.get("Engine"))
                 print("Price :", data.get("Price"))
 
                 print("########################################")
@@ -142,7 +143,8 @@ class RiyasewanaExtractor(BaseExtractor):
                     gear=data.get("Gear"),
                     contact=data.get("Contact"),
                     url=href,
-                    date=date
+                    date=date,
+                    engine=data.get("Engine (cc)")
                 )
 
                 cars.append(car)

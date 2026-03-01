@@ -14,3 +14,4 @@ class Car:
     contact: str = None
     url: str = None
     date: str = None
+    engine: str = None

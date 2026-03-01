@@ -10,7 +10,7 @@ if __name__ == "__main__":
                 "vitz", "yaris", "corolla", "axio", "premio", "allion",
                 "prius", "aqua", "passo", "belta", "roomy"
             ],
-            "suzuki": ["alto", "wagon-r", "swift", "celerio", "ciaz", "every"],
+            "suzuki": ["alto", "wagon-r", "swift", "celerio", "ciaz", "every", "baleno"],
             "honda": ["fit", "grace", "civic", "city", "insight"],
             "nissan": ["march", "note", "leaf", "sunny", "bluebird", "latio"],
             "mazda": ["demio", "axela", "familia"],
@@ -20,8 +20,8 @@ if __name__ == "__main__":
             "hyundai": ["accent", "elantra", "i10", "i20"],
             "kia": ["rio", "cerato", "picanto", "sorento"]
         },
-        "suv": {
-            "toyota": ["rav4", "land-cruiser", "prado", "fortuner", "rush", "chr"],
+        "suvs": {
+            "toyota": ["raize", "rav4", "land-cruiser", "prado", "fortuner", "rush", "chr"],
             "honda": ["vezel", "cr-v", "hr-v"],
             "nissan": ["x-trail", "juke", "qashqai", "magnite"],
             "mitsubishi": ["outlander", "pajero", "montero", "asx"],
